@@ -1,41 +1,174 @@
 # Swafe audit details
-- Total Prize Pool: XXX XXX USDC (Airtable: Total award pool)
-    - HM awards: up to XXX XXX USDC (Airtable: HM (main) pool)
-        - If no valid Highs or Mediums are found, the HM pool is $0 (🐺 C4 EM: adjust in case of tiered pools)
-    - QA awards: XXX XXX USDC (Airtable: QA pool)
-    - Judge awards: XXX XXX USDC (Airtable: Judge Fee)
-    - Scout awards: $500 USDC (Airtable: Scout fee - but usually $500 USDC)
-    - (this line can be removed if there is no mitigation) Mitigation Review: XXX XXX USDC
+- Total Prize Pool: $100,000 in USDC 
+    - HM awards: up to $81,600 in USDC
+        - If no valid Highs or Mediums are found, the HM pool is $0
+    - QA awards: $3,400 in USDC
+    - Judge awards: $2,500 in USDC
+    - Scout awards: $500 in USDC
+    - Mitigation Review: $12,000 in USDC
 - [Read our guidelines for more details](https://docs.code4rena.com/competitions)
-- Starts XXX XXX XX 20:00 UTC (ex. `Starts March 22, 2023 20:00 UTC`)
-- Ends XXX XXX XX 20:00 UTC (ex. `Ends March 30, 2023 20:00 UTC`)
+- Starts November 18, 2025 20:00 UTC 
+- Ends December 9, 2025 20:00 UTC 
 
 ### ❗ Important notes for wardens
-(🐺 C4 staff: delete the PoC requirement section if not applicable - i.e. for non-Solidity/EVM audits.)
-1. A coded, runnable PoC is required for all High/Medium submissions to this audit. 
-    - This repo includes a basic template to run the test suite.
-    - PoCs must use the test suite provided in this repo.
-    - Your submission will be marked as Insufficient if the POC is not runnable and working with the provided test suite.
-    - Exception: PoC is optional (though recommended) for wardens with signal ≥ 0.68.
 1. Judging phase risk adjustments (upgrades/downgrades):
     - High- or Medium-risk submissions downgraded by the judge to Low-risk (QA) will be ineligible for awards.
     - Upgrading a Low-risk finding from a QA report to a Medium- or High-risk finding is not supported.
     - As such, wardens are encouraged to select the appropriate risk level carefully during the submission phase.
 
-## V12 findings (🐺 C4 staff: remove this section for non-Solidity/EVM audits)
-
-[V12](https://v12.zellic.io/) is [Zellic](https://zellic.io)'s in-house AI auditing tool. It is the only autonomous Solidity auditor that [reliably finds Highs and Criticals](https://www.zellic.io/blog/introducing-v12/). All issues found by V12 will be judged as out of scope and ineligible for awards.
-
-V12 findings will be posted in this section within the first two days of the competition.  
-
 ## Publicly known issues
 
 _Anything included in this section is considered a publicly known issue and is therefore ineligible for awards._
 
-## 🐺 C4: Begin Gist paste here (and delete this line)
+Denial of service for HTTP endpoints not in scope.
+
+✅ SCOUTS: Please format the response above 👆 so its not a wall of text and its readable.
+
+# Overview
+
+[ ⭐️ SPONSORS: add info here ]
+
+## Links
+
+- **Previous audits:**  No previous audit reports.
+  - ✅ SCOUTS: If there are multiple report links, please format them in a list.
+- **Documentation:** https://github.com/swafe-io/swafe-book
+- **Website:** https://swafe.io/
+- **X/Twitter:** https://x.com/swafe_io
+
+---
+
+# Scope
+
+[ ✅ SCOUTS: add scoping and technical details here ]
+
+### Files in scope
+- ✅ This should be completed using the `metrics.md` file
+- ✅ Last row of the table should be Total: SLOC
+- ✅ SCOUTS: Have the sponsor review and and confirm in text the details in the section titled "Scoping Q amp; A"
+
+*For sponsors that don't use the scoping tool: list all files in scope in the table below (along with hyperlinks) -- and feel free to add notes to emphasize areas of focus.*
+
+| Contract | SLOC | Purpose | Libraries used |  
+| ----------- | ----------- | ----------- | ----------- |
+| [contracts/folder/sample.sol](https://github.com/code-423n4/repo-name/blob/contracts/folder/sample.sol) | 123 | This contract does XYZ | [`@openzeppelin/*`](https://openzeppelin.com/contracts/) |
+
+### Files out of scope
+✅ SCOUTS: List files/directories out of scope
+
+# Additional context
+
+## Areas of concern (where to focus for bugs)
+Scope:
+
+lib/
+api/
+contracts/
 
 
+Primary Security Concerns:
 
+1. Unauthorized backup reconstruction
+2. Unauthorized account recovery - Without email verification and (optionally) guardian approval
+3. Backup ciphertext security - Stealing or lack of binding for backup ciphertexts to accounts
+4. Integrity attacks - Mauling of stored secrets/backups
+5. Privacy violations - Anonymity violations from on-chain content or off-chain node interaction, including leakage of user identity (e.g., email addresses)
+
+✅ SCOUTS: Please format the response above 👆 so its not a wall of text and its readable.
+
+## Main invariants
+
+- Only the owner of an account should be able to request the reconstruction of a backup.
+- Only the owner of an email should be able to request the recovery of an account.
+- Recovery of an account only occurs when more than the specified threshold of Guardians has approved the request.
+- Recovery of a backup only occurs when more than the specified threshold of Guardians has approved the request.
+- After recovering an account, the owner should be able to request and complete recovery of backups as long as at there is sufficient Guardians online and off-chain nodes available for relaying shares.
+- An email should be associated to at most one account at a time.
+- An account may have multiple emails associated for recovery.
+- A user should be able to recover his account with only access to his email (and an out-of-band channel for communicating with Guardians).
+
+✅ SCOUTS: Please format the response above 👆 so its not a wall of text and its readable.
+
+## All trusted roles in the protocol
+
+1. Swafe-io
+Trusted for:
+Keeping user emails confidential
+Providing "email certificates" only after users prove email possession
+Generating shares for the VPRF used to hide email ↔ account association during a one-time setup ceremony.
+
+Explicitly NOT trusted for:
+Unilaterally causing Guardians to reconstruct or recover an account without explicit permission provided by each guardian.
+
+
+2. Guardians
+Trust Model: Honest threshold assumption.
+If a user specifies a reconstruction threshold of t out of n nodes, we assume at least t of the selected guardians for that backup are honest for liveness and n-t for secrecy.
+
+Key Assumptions:
+Any number of corrupted guardians may exist in the system
+Honest users manually select guardians they trust (friends, family, trusted institutions)
+The user-selected threshold t at least t guardians are willing to reconstruct.
+The user-selected threshold t at most t-1 guardians are corrupted/malicious.
+
+Exception: If both conditions hold:
+- Swafe-io is honest
+- Off-chain nodes are honest
+
+Then backups/accounts remain unrecoverable even if all Guardians are corrupted.
+
+3. Off-chain Nodes
+Off-chain nodes are full nodes capable of running off-chain computation and holding secret state. Security guarantees vary based on the corruption model:
+
+All off-chain nodes are honest:
+- User emails remain hidden even at registration/recovery time
+
+A minority of off-chain nodes are honest:
+- Snapshot of corrupted off-chain node states hides user emails and account associations. Leaking an off-chain node's state does not reveal user emails or their association to on-chain contracts
+- Secrets without specified guardians remain decryptable without a valid "email certificate" from Swafe.
+- The system remains available even if a minority subset of off-chain nodes are offline or unresponsive
+
+A majority of off-chain nodes are corrupted:
+- Secrets specifying guardians remain undecryptable
+
+✅ SCOUTS: Please format the response above 👆 using the template below👇
+
+| Role                                | Description                       |
+| --------------------------------------- | ---------------------------- |
+| Owner                          | Has superpowers                |
+| Administrator                             | Can change fees                       |
+
+✅ SCOUTS: Please format the response above 👆 so its not a wall of text and its readable.
+
+## Running tests
+
+Install Rust and just, then:
+
+just install-deps
+just test
+
+✅ SCOUTS: Please format the response above 👆 using the template below👇
+
+```bash
+git clone https://github.com/code-423n4/2023-08-arbitrum
+git submodule update --init --recursive
+cd governance
+foundryup
+make install
+make build
+make sc-election-test
+```
+To run code coverage
+```bash
+make coverage
+```
+
+✅ SCOUTS: Add a screenshot of your terminal showing the test coverage
+
+## Miscellaneous
+Employees of Swafe and employees' family members are ineligible to participate in this audit.
+
+Code4rena's rules cannot be overridden by the contents of this README. In case of doubt, please check with C4 staff.
 
 
 # Scope
