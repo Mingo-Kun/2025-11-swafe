@@ -1,0 +1,8 @@
+/app/swafe-lib/cli/src/commands/account.rs
+/app/swafe-lib/cli/src/commands/association.rs
+/app/swafe-lib/cli/src/commands/backup.rs
+/app/swafe-lib/cli/src/commands/mod.rs
+/app/swafe-lib/cli/src/commands/reconstruction.rs
+/app/swafe-lib/cli/src/commands/utils.rs
+/app/swafe-lib/cli/src/commands/vdrf.rs
+/app/swafe-lib/cli/src/main.rs
