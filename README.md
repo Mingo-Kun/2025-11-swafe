@@ -28,6 +28,8 @@ Denial-of-Service attacks for HTTP endpoints are not considered in scope as HM i
 
 This Repository contains the Swafe library, which can be used as SDK for building Swafe-based clients, as well as for creating Swafe-based partisia contracts.
 
+The protocol implementation is based on the [Swafe Book](https://github.com/swafe-io/swafe-book) specification.
+
 ## Project Structure
 
 - `/lib` - Core Rust library implementation with cryptographic primitives
@@ -38,6 +40,7 @@ This Repository contains the Swafe library, which can be used as SDK for buildin
 ## Links
 
 - **Previous audits:**  No previous audit reports.
+- **Documentation:** https://github.com/swafe-io/swafe-book 
 - **Website:** https://swafe.io/
 - **X/Twitter:** https://x.com/swafe_io
 - **Code walk-through:** https://youtu.be/FO2jbib8C7o
